@@ -9,21 +9,11 @@
 import UIKit
 
 public class MainAPI: NSObject {
-    /// 获取当前Window
-    @objc public static var appWindow: UIWindow? {
-        var window: UIWindow?
-        if #available(iOS 13.0, *) {
-            if let scenes = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive && $0.isKind(of: UIWindowScene.self) }) {
-                window = (scenes as! UIWindowScene).windows.first
-            }
-        } else {
-            window = UIApplication.shared.keyWindow
-            if (window == nil) || (window!.windowLevel != .normal) {
-                //app window的windowLevel默认是UIWindow.Level.normal
-                window = UIApplication.shared.windows.first { $0.windowLevel == .normal }
-            }
+    /// 获取Key Window
+    @objc public static var keyWindow: UIWindow? {
+        return UIApplication.shared.windows.reversed().first {
+            return $0.isKeyWindow && ($0.screen === UIScreen.main) && (!$0.isHidden && $0.alpha > 0);
         }
-        return window;
     }
     
     /// 获取当前显示的ViewController，忽略"特殊视图控制器"
@@ -40,7 +30,7 @@ public class MainAPI: NSObject {
     /// - Parameter ignoreSpecial: 忽略"特殊视图控制器"
     /// - Returns: 控制器
     public static func currentVC(ignoreSpecial: Bool = true) -> UIViewController? {
-        var currentVisibleVC = appWindow?.rootViewController
+        var currentVisibleVC = keyWindow?.rootViewController
         while let presentedVC = currentVisibleVC?.presentedViewController {
             if ignoreSpecial {
                 if ignore(viewController: presentedVC) {
@@ -79,7 +69,7 @@ public class MainAPI: NSObject {
     /// 切换【根控制器UITabBarController】选项视图，并关闭弹出视图
     /// - Parameter index: selected index
     @objc public static func tabBarSelected(_ index: Int) {
-        guard let tabBarVC = appWindow?.rootViewController as? UITabBarController else {
+        guard let tabBarVC = keyWindow?.rootViewController as? UITabBarController else {
             return
         }
         guard 0 <= index, let count = tabBarVC.viewControllers?.count, index < count else {
