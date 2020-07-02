@@ -1,6 +1,6 @@
 //
 //  MainAPI.swift
-//  DLAPIKit
+//  LYAPIKit
 //
 //  Created by 似水灵修 on 2020/4/4.
 //  Copyright © 2020 CocoaPods. All rights reserved.
@@ -9,24 +9,24 @@
 import UIKit
 
 public class MainAPI: NSObject {
-    /// 获取Key Window
+    /// 获取当前 Key Window
     @objc public static var keyWindow: UIWindow? {
         return UIApplication.shared.windows.reversed().first {
-            return $0.isKeyWindow && ($0.screen === UIScreen.main) && (!$0.isHidden && $0.alpha > 0);
+            $0.isKeyWindow && ($0.screen === UIScreen.main) && (!$0.isHidden && $0.alpha > 0);
         }
     }
     
-    /// 获取当前显示的ViewController，忽略"特殊视图控制器"
+    /// 获取当前显示的 View Controller，忽略"特殊视图控制器"
     @objc public static var currentVC: UIViewController? {
         return currentVC()
     }
     
-    /// 获取当前显示的ViewController，不忽略"特殊视图控制器"
+    /// 获取当前显示的 View Controller，不忽略"特殊视图控制器"
     @objc public static var currentVCOnDisplay: UIViewController? {
         return currentVC(ignoreSpecial: false)
     }
     
-    /// 获取当前显示的ViewController
+    /// 获取当前显示的 View Controller
     /// - Parameter ignoreSpecial: 忽略"特殊视图控制器"
     /// - Returns: 控制器
     public static func currentVC(ignoreSpecial: Bool = true) -> UIViewController? {
@@ -66,7 +66,7 @@ public class MainAPI: NSObject {
         return ignoreClass.first { viewController.isKind(of: $0) } != nil
     }
     
-    /// 切换【根控制器UITabBarController】选项视图，并关闭弹出视图
+    /// 切换选项视图【根控制器是UITabBarController】，并关闭弹出的多级视图
     /// - Parameter index: selected index
     @objc public static func tabBarSelected(_ index: Int) {
         guard let tabBarVC = keyWindow?.rootViewController as? UITabBarController else {
